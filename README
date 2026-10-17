@@ -1,0 +1,43 @@
+# Credit scoring: Give Me Some Credit
+
+Group project, Credit Scoring course.
+
+## Objective
+
+Estimate the risk that a borrower will experience serious financial distress (90 days or more past due) within the next two years, and group borrowers into risk categories.
+
+## Data
+
+The Give Me Some Credit dataset (Kaggle): 150,000 borrowers in the training set and 101,503 in the test set. The target is `SeriousDlqin2yrs`. Only 6.7% of borrowers default, so the classes are strongly imbalanced, as in a real loan portfolio.
+
+## Method
+
+**Variable selection**
+We kept the variables whose correlation with the target was above 0.1 in absolute value. The three late-payment variables (30-59, 60-89 and 90+ days) are almost perfectly correlated with each other (0.98 to 0.99), so we kept only one of them to avoid multicollinearity. The final model uses two variables: the number of 30-59 day late payments and age.
+
+**Risk segmentation**
+After standardising the data, we applied K-Means. The elbow method gave k = 3, and the clusters were visualised with a PCA projection.
+
+| Segment | Borrowers | Default rate |
+|---|---|---|
+| Low risk | 68,950 | 3.9% |
+| Medium risk | 80,781 | 8.9% |
+| High risk | 269 | 54.6% |
+
+The model was then used to assign each borrower in the test set to a segment.
+
+**Probability of default**
+We trained a logistic regression on a stratified 80/20 split.
+
+- AUC: 0.76
+- 65% of defaulters are correctly identified
+- One standard deviation more of 30-59 day late payments multiplies the odds of default by about 13.5, while older borrowers are less risky (odds ratio of 0.61 per standard deviation)
+
+## Files
+
+| File | Content |
+|---|---|
+| `credit_scoring_project.ipynb` | Python notebook with the full analysis |
+| `GiveMeSomeCredit.zip` | Data: `cs-training.csv`, `cs-test.csv`, `sampleEntry.csv` |
+
+Libraries: pandas, numpy, scikit-learn, matplotlib, seaborn. Unzip the archive in the same folder as the notebook before running it.
